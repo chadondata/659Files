@@ -2,6 +2,7 @@
 require(RODBC)
 
 # Create a connection to SQL Server using our 64-bit DSN
+# NOTE: Be sure to change this DSN to match your actual DSN
 myconn <- odbcConnect("VidCast")
 
 # Ready the SQL to send to the Server
