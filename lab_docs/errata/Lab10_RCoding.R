@@ -1,13 +1,17 @@
-# Ready RODBC for use in this script
-require(RODBC)
+library(odbc)
 
-# Create a connection to SQL Server using our 64-bit DSN
-# NOTE: Be sure to change this DSN to match your actual DSN
-myconn <- odbcConnect("VidCast")
+# Create a connection to SQL Server using ODBC
+# NOTE: Be sure to change the database to your actual database
+myconn <- DBI::dbConnect(odbc::odbc(),
+                         Driver             = "SQL Server",
+                         Server             = "ist-s-students.syr.edu",
+                         Database           = "IST659_M407_caharper",
+                         Trusted_Connection = "True"
+)
 
 # Ready the SQL to send to the Server
 sqlSelectStatement <-
-"SELECT
+  "SELECT
   vc_VidCast.vc_VidCastID
 , vc_VidCast.VidCastTitle
 , DATEPART(dw, StartDateTime) as StartDayOfWeek
@@ -19,8 +23,7 @@ FROM vc_VidCast
 JOIN vc_User ON vc_User.vc_UserID = vc_VidCast.vc_UserID
 "
 
-# Send the request to the server and store the results in a variable
-sqlResult <- sqlQuery(myconn, sqlSelectStatement)
+sqlResult <- dbGetQuery(myconn, sqlSelectStatement)
 
 # Use +/- 3 sigma to prune outliers (Symmetrically distributed)
 sqlResult <- subset(sqlResult, ActualDuration > 0)
@@ -58,7 +61,4 @@ barplot(dayCounts,
         names.arg = days
 )
 
-# Close all connections
-odbcCloseAll()
-
-# Fin
+DBI::dbDisconnect(myconn)
