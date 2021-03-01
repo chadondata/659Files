@@ -3,10 +3,10 @@ library(odbc)
 # Create a connection to SQL Server using ODBC
 # NOTE: Be sure to change the database to your actual database
 myconn <- DBI::dbConnect(odbc::odbc(),
-                         Driver             = "SQL Server",
-                         Server             = "ist-s-students.syr.edu",
-                         Database           = "IST659_M407_caharper",
-                         Trusted_Connection = "True"
+          Driver             = "SQL Server Native Client 11.0",
+          Server             = "dblab.ischool.syr.edu",
+          Database           = "IST659_M401_caharper",
+          Trusted_Connection = "Yes"
 )
 
 # Ready the SQL to send to the Server
@@ -32,7 +32,6 @@ mu <- mean(sqlResult$ActualDuration)
 upper <- mu + (3*sigma)
 lower <- mu - (3*sigma)
 
-# Thanks, Shaun, for this handy outlier fix!
 sqlResult <- subset(sqlResult, ActualDuration < upper)
 sqlResult <- subset(sqlResult, ActualDuration > lower)
 
